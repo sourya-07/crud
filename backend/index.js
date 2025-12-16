@@ -4,30 +4,32 @@ const express = require("express");
 const cors = require("cors");
 
 const connectDb = require("./db/db");
-
-// routes
 const authRoutes = require("./routes/auth");
 const studentRoutes = require("./routes/student");
 
 const app = express();
+const PORT = process.env.PORT || 9922;
 
-
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Database connection
 connectDb();
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 
-
+// Health check
 app.get("/", (req, res) => {
-  res.send("API is running");
+  res.json({
+    status: "ok",
+    message: "API is running"
+  });
 });
 
-
-const PORT = process.env.PORT || 9922;
-
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running at PORT ${PORT}`);
+  console.log(`✓ Server running on port ${PORT}`);
 });

@@ -8,14 +8,14 @@ const signup = async (req, res) => {
     try {
         const { name, email, password, role, course } = req.body;
 
-        const checkUser = await User.findOne({ email });
-        if (checkUser) {
-            return res.status(400).json({ message: "User already exists" });
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email is already registered" });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = await User.create({
+        const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
@@ -24,20 +24,23 @@ const signup = async (req, res) => {
 
         if (role === "student") {
             await Student.create({
-                userId: user._id,
+                userId: newUser._id,
                 name,
                 email,
-                course
+                course: course || "Not specified"
             });
         }
 
-        res.status(201).json({ message: "User created successfully" });
-    } catch (err) {
-        res.status(500).json({ message: "Server error" });
+        res.status(201).json({
+            message: "Account created successfully",
+            role: newUser.role
+        });
+    } catch (error) {
+        console.error("Signup error:", error);
+        res.status(500).json({ message: "Failed to create account. Please try again." });
     }
 };
 
-// Login
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -47,8 +50,8 @@ const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
-        const checkPassword = await bcrypt.compare(password, user.password);
-        if (!checkPassword) {
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
 
@@ -58,9 +61,14 @@ const login = async (req, res) => {
             { expiresIn: "24d" }
         );
 
-        res.status(200).json({ message: "Login successful", token });
-    } catch (err) {
-        res.status(500).json({ message: "Server error" });
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            role: user.role
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Login failed. Please try again." });
     }
 };
 

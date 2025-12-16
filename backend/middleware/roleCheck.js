@@ -1,11 +1,13 @@
 const roleCheck = (requiredRole) => {
     return (req, res, next) => {
         if (!req.user) {
-            return res.status(401).send({ error: 'Unauthorized' });
+            return res.status(401).json({ error: 'Unauthorized access' });
         }
 
         if (req.user.role !== requiredRole) {
-            return res.status(403).json({ message: "Access denied" });
+            return res.status(403).json({
+                message: `Access denied. ${requiredRole} role required.`
+            });
         }
 
         next();
