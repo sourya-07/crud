@@ -45,6 +45,15 @@ const Login = () => {
         />
 
         <button type="submit">Login</button>
+        <p style={{ textAlign: "center", marginTop: "10px", fontSize: "0.9rem", color: "#aaa" }}>
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/signup")}
+            style={{ color: "#007bff", cursor: "pointer", textDecoration: "underline" }}
+          >
+            Sign up
+          </span>
+        </p>
       </form>
     </div>
   );

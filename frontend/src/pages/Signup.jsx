@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -8,6 +9,7 @@ const Signup = () => {
     role: "student",
     course: ""
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,6 +43,15 @@ const Signup = () => {
         )}
 
         <button type="submit">Signup</button>
+        <p style={{ textAlign: "center", marginTop: "10px", fontSize: "0.9rem", color: "#aaa" }}>
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            style={{ color: "#007bff", cursor: "pointer", textDecoration: "underline" }}
+          >
+            Login
+          </span>
+        </p>
       </form>
     </div>
   );
