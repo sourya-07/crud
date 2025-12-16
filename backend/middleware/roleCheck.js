@@ -10,4 +10,6 @@ const roleCheck = (requiredRole) => {
 
         next();
     };
-}
+};
+
+module.exports = roleCheck;

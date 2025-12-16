@@ -1,17 +1,33 @@
-require("dotenv").config()
-const express = require("express")
-const db = require("./db/db.js")
+require("dotenv").config();
 
+const express = require("express");
+const cors = require("cors");
 
-db();
+const connectDb = require("./db/db");
+
+// routes
+const authRoutes = require("./routes/auth");
+const studentRoutes = require("./routes/student");
+
 const app = express();
 
-const PORT = process.env.PORT || 5433;
+
+app.use(cors());
+app.use(express.json());
+
+connectDb();
+
+app.use("/api/auth", authRoutes);
+app.use("/api/students", studentRoutes);
+
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+  res.send("API is running");
 });
 
-app.listen(PORT, (() => {
-    console.log(`Server is running at PORT ${PORT}`)
-}))
+
+const PORT = process.env.PORT || 9922;
+
+app.listen(PORT, () => {
+  console.log(`Server is running at PORT ${PORT}`);
+});
